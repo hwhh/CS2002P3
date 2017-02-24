@@ -2,3 +2,7 @@
 /stackcheck
 /cmake-build-debug
 *.txt
+.idea/
+big-solvable.in
+incomplete-2.in
+TestFIiles/
