@@ -11,10 +11,18 @@
 
 typedef struct {
     int size;
+    double length;
     int *board;
     bool *fixed_values;
     bool *possible_values;
 } Sudoku_board;
+
+
+enum STATE {
+    INVALID = -1,//": The array contains some value twice.",
+    INCOMPLETE = 0,//": The array is not INVALID, but is not complete.",
+    COMPLETE = 1//": The array is not INVALID, and every value is assigned. \n"This means the array contains the values between 1 and 9, in some permutation."
+};
 
 bool writ_value(Sudoku_board *sudoku_board);
 
@@ -28,4 +36,6 @@ Sudoku_board copy_sudoku_board(Sudoku_board sudoku_board);
 
 bool free_sudoku_board(Sudoku_board *sudoku_board);
 
-void check_list(int *contents, int size);
+enum STATE check_list(int *contents, int size);
+
+void check_sudoku(Sudoku_board *sudoku_board);
