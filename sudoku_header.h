@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+#define BUFFER_SIZE 10000
 
 #ifndef PRACTICAL3_SUDOKU_HEADER_H
 #define PRACTICAL3_SUDOKU_HEADER_H
@@ -38,4 +39,4 @@ bool free_sudoku_board(Sudoku_board *sudoku_board);
 
 enum STATE check_list(int *contents, int size);
 
-void check_sudoku(Sudoku_board *sudoku_board);
+bool check_sudoku(Sudoku_board *sudoku_board);
