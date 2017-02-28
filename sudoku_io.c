@@ -8,30 +8,30 @@ int get_coordinates(int size) {
     return locations[1] + (locations[0] * (size * size));
 }
 
-bool write_value(Sudoku_board *sudoku_board) {
-    int size = sudoku_board->size, value;
+bool write_value(Sudoku_board sudoku_board) {
+    int size = sudoku_board.size, value;
     int location = get_coordinates(size);
-    if (location < 0 || location > sudoku_board->length)
+    if (location < 0 || location > sudoku_board.length)
         return false;
     printf("Please input new value: ");
     scanf("%d", &value);
     if (value < pow(size, 2) && value > 0) {
-        sudoku_board->board[location] = value;
+        sudoku_board.board[location] = value;
         return true;
     }
     return false;
 }
 
-int read_value(Sudoku_board *sudoku_board) {
-    int location = get_coordinates(sudoku_board->size);
-    return (sudoku_board->board[location]);
+int read_value(Sudoku_board sudoku_board) {
+    int location = get_coordinates(sudoku_board.size);
+    return (sudoku_board.board[location]);
 }
 
-void print_sudoku_board(Sudoku_board *sudoku_board) {
-    int size = sudoku_board->size;
-    for (int i = 0; i < sudoku_board->length; i += pow(size, 2)) {
+void print_sudoku_board(Sudoku_board sudoku_board) {
+    int size = sudoku_board.size;
+    for (int i = 0; i < sudoku_board.length; i += pow(size, 2)) {
         for (int j =0; j<size*size; j++){
-            int x = sudoku_board->board[i + j];
+            int x = sudoku_board.board[i + j];
             if (x < 10)
                 printf("  %d", x);
             else
@@ -42,19 +42,20 @@ void print_sudoku_board(Sudoku_board *sudoku_board) {
 }
 
 Sudoku_board copy_sudoku_board(Sudoku_board sudoku_board) {
-    return sudoku_board;
+    Sudoku_board copy = sudoku_board;
+    return copy;
 }
 
-bool free_sudoku_board(Sudoku_board *sudoku_board) {
-    for (int i = 0; i < sudoku_board->length; i++) {
-        sudoku_board->board[i] = 0;
+bool free_sudoku_board(Sudoku_board sudoku_board) {
+    for (int i = 0; i < sudoku_board.length; i++) {
+        sudoku_board.board[i] = 0;
     }
     return true;
 }
 
-void delete_board(Sudoku_board *sudoku_board) {
-    free(sudoku_board->board);
-    free(sudoku_board->possible_values);
+void delete_board(Sudoku_board sudoku_board) {
+    free(sudoku_board.board);
+    free(sudoku_board.possible_values);
 }
 
 
@@ -78,79 +79,79 @@ enum STATE check_list(int *contents, int size) {
         return COMPLETE;
 }
 
-int *get_row(Sudoku_board *sudoku_board, int index, double size) {
-    int *row = malloc((size_t) size);
+int *get_row(Sudoku_board sudoku_board, int index, int size) {
+    int *row = calloc((size_t) size, sizeof(int));
     for (int j = 0; j < size; j++) {
-        row[j] = sudoku_board->board[index + j];
+        row[j] = sudoku_board.board[index + j];
     }
     return row;
 }
 
-int *get_col(Sudoku_board *sudoku_board, int index, double size) {
-    int *col = malloc((size_t) size);
+int *get_col(Sudoku_board sudoku_board, int index, int size) {
+    int *col = calloc((size_t) size, sizeof(int));
     int count = 0;
-    for (int j = 0; j < sudoku_board->length; j += size) {
-        col[count] = sudoku_board->board[index + j];
+    for (int j = 0; j < sudoku_board.length; j += size) {
+        col[count] = sudoku_board.board[index + j];
         count++;
     }
     return col;
 }
 
-int *get_box(Sudoku_board *sudoku_board, int index, double size) {
-    int *box = malloc((size_t) size);
+int *get_box(Sudoku_board sudoku_board, int index, int size) {
+    int *box = calloc((size_t) size, sizeof(int));
     int offset = index;
     for (int j = 0; j < size; j++) {
-        if (j % sudoku_board->size == 0 && j > 0) {
-            offset += (size - sudoku_board->size + 1);
-            box[j] = sudoku_board->board[offset - 1];
+        if (j % sudoku_board.size == 0 && j > 0) {
+            offset += (size - sudoku_board.size + 1);
+            box[j] = sudoku_board.board[offset - 1];
         } else
-            box[j] = sudoku_board->board[offset++];
+            box[j] = sudoku_board.board[offset++];
     }
     return box;
 }
 
 
-enum STATE check_sudoku(Sudoku_board *sudoku_board) {
+enum STATE check_sudoku(Sudoku_board sudoku_board) {
     int status = 1;
-    double size = pow(sudoku_board->size, 2);
-    for (int i = 0; i < sudoku_board->length; i += size) {
+    int size = (int) pow(sudoku_board.size, 2);
+    for (int i = 0; i < sudoku_board.length; i += size) {
         int *row = get_row(sudoku_board, i, size);
         int res = check_list(row, (int) size);
         free(row);
         if (res == -1) {
-            printf("INVALID");
+            //printf("INVALID");
             return INVALID;
         } else if (res == 0)
             status = 0;
     }
     for (int i = 0; i < size; i++) {
         int *col = get_col(sudoku_board, i, size);
-        int res = check_list(col, (int) size);
+        int res = check_list(col, size);
         free(col);
         if (res == -1) {
-            printf("INVALID");
+            //printf("INVALID");
             return INVALID;
         } else if (res == 0)
             status = 0;
     }
     int offset = 0;
-    for (int i = 0; i < pow(sudoku_board->size, 3); i += sudoku_board->size) {
+    for (int i = 0; i < pow(sudoku_board.size, 3); i += sudoku_board.size) {
         if (i % (int) size == 0 && i > 0)
-            offset += pow(sudoku_board->size, 3) - size;
+            offset += pow(sudoku_board.size, 3) - size;
         int *box = get_box(sudoku_board, i + offset, size);
-        int res = check_list(box, (int) size);
+        int res = check_list(box, size);
         free(box);
         if (res == -1) {
-            printf("INVALID");
+            //printf("INVALID");
             return INVALID;
         } else if (res == 0)
             status = 0;
     }
     if (status == 0) {
-        printf("INCOMPLETE");
+        //printf("INCOMPLETE");
         return INCOMPLETE;
     }
-    printf("COMPLETE");
+    //printf("COMPLETE");
     return COMPLETE;
 }
 
@@ -187,17 +188,12 @@ Sudoku_board create_board(char *filename) {
             else
                 fscanf(file, "%d", &x);
     }
+    check_sudoku(sudoku_board);
     return sudoku_board;
 }
 
-//
-//int main(){
-//    Sudoku_board s = create_board("/Users/henryhargreaves/Documents/University/Year_2/CS2002/Practicals/Practical3-C2/TestFIiles/incomplete-2.in");
-//    print_sudoku_board(&s);
-//    check_sudoku(&s);
-//    delete_board(&s);
-//}
-//
+
+
 
 
 
