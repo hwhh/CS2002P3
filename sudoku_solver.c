@@ -1,8 +1,10 @@
 #include "sudoku_io.c"
 
+int counter = 0;
+
 bool contains(int *arr, int val, int size) {
     for (int i = 0; i < size; i++) {
-        if (arr[i] == val)
+        if (arr[i] == val && val != 0)
             return true;
     }
     return false;
@@ -31,7 +33,7 @@ int get_box_location(int index, int size) {
 int *get_possible_values(Sudoku_board sudoku_board, int index) {
     int size = sudoku_board.size;
     int box_size = (int) pow(size, 2);
-    int *possible_values = malloc((size_t) box_size);
+    int *possible_values = calloc((size_t) box_size, sizeof(int));// = malloc((size_t) box_size);
     int row_id = box_size * get_row_location(index, size);
     int col_id = get_col_location(index, size);
     int box_id = get_box_location(index, size);
@@ -52,7 +54,7 @@ int *get_possible_values(Sudoku_board sudoku_board, int index) {
 }
 
 int get_nex_cell(Sudoku_board sudoku_board) {
-    for (int i = 0; i < sudoku_board.length; ++i) {
+    for (int i = 0; i < sudoku_board.length; i++) {
         if (sudoku_board.possible_values[i] == true)
             return i;
     }
@@ -69,34 +71,30 @@ int get_nex_cell(Sudoku_board sudoku_board) {
 //        remove value from next_square (i.e. backtrack to a previous state)
 //return FAILURE
 enum STATE sudoku_solve(Sudoku_board sudoku_board) {
-    if (check_sudoku(sudoku_board) == COMPLETE) {
+    //int state = check_sudoku(sudoku_board);
+    if (counter > 0)
+        return MULTIPLE;
+    if (check_sudoku(sudoku_board) == 1) {
+        counter++;
         print_sudoku_board(sudoku_board);
         return COMPLETE;
-    } else if (check_sudoku(sudoku_board) == INVALID) {
-        return INVALID;
+    } else if (check_sudoku(sudoku_board) == -1) {
+        return UNSOLVABLE;
     } else {
         int index = get_nex_cell(sudoku_board);
         int *values = get_possible_values(sudoku_board, index);
-        for (int i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        for (int i = 0; i < pow(sudoku_board.size, 2); i++) {
+            if (values[i] == 0)
+                break;
             Sudoku_board copy = copy_sudoku_board(sudoku_board);
             copy.board[index] = values[i];
             copy.possible_values[index] = false;
-            if (sudoku_solve(copy) == COMPLETE) {
-                return COMPLETE;
-            }
-            //copy.board[index]=0;
-            //copy.possible_values[index]=true;
-
+            sudoku_solve(copy);
         }
-        //free(values);
+        free(values);
     }
-    return INCOMPLETE;
+    //return INCOMPLETE;
 }
 
 
-int main() {
-    Sudoku_board s = create_board("");
-    sudoku_solve(s);
 
-
-}
