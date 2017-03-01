@@ -1,6 +1,7 @@
 #include "sudoku_io.c"
 
 int counter = 0;
+Sudoku_board solved_board;
 
 bool contains(int *arr, int val, int size) {
     for (int i = 0; i < size; i++) {
@@ -71,16 +72,14 @@ int get_nex_cell(Sudoku_board sudoku_board) {
 //        remove value from next_square (i.e. backtrack to a previous state)
 //return FAILURE
 enum STATE sudoku_solve(Sudoku_board sudoku_board) {
-    //int state = check_sudoku(sudoku_board);
-    if (counter > 0)
-        return MULTIPLE;
-    if (check_sudoku(sudoku_board) == 1) {
+    int state = check_sudoku(sudoku_board);
+    if (state == 1) {
+        solved_board = sudoku_board;
         counter++;
-        print_sudoku_board(sudoku_board);
         return COMPLETE;
-    } else if (check_sudoku(sudoku_board) == -1) {
+    } else if (state == -1)
         return UNSOLVABLE;
-    } else {
+    else {
         int index = get_nex_cell(sudoku_board);
         int *values = get_possible_values(sudoku_board, index);
         for (int i = 0; i < pow(sudoku_board.size, 2); i++) {
@@ -89,11 +88,13 @@ enum STATE sudoku_solve(Sudoku_board sudoku_board) {
             Sudoku_board copy = copy_sudoku_board(sudoku_board);
             copy.board[index] = values[i];
             copy.possible_values[index] = false;
-            sudoku_solve(copy);
+            if (counter > 1)
+                return MULTIPLE;
+            else
+                sudoku_solve(copy);
         }
         free(values);
     }
-    //return INCOMPLETE;
 }
 
 
