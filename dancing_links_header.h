@@ -9,7 +9,6 @@
 
 
 typedef struct {
-
     struct Node *Header;
     struct Node *Left;
     struct Node *Right;
@@ -19,6 +18,12 @@ typedef struct {
     char IDName;
     int IDNum;
 } Node;
+
+char **data;
+Node **matrix;
+Node root;
+Node *root_node = &root;
+Node *row_header[];
 
 int rows, cols, row_offset, col_offset, box_offset;
 
@@ -62,6 +67,21 @@ int get_index(int num, int row, int col, int size) {
 }
 
 
+int data_left(int i) {
+    return i - 1 < 0 ? cols - 1 : i - 1;
+}
+
+int data_right(int i) {
+    return (i + 1) % cols;
+}
+
+int data_up(int i) {
+    return i - 1 < 0 ? rows - 1 : i - 1;
+}
+
+int data_down(int i) {
+    return (i + 1) % rows;
+}
 
 
 
