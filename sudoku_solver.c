@@ -34,7 +34,7 @@ int get_box_location(int index, int size) {
 int *get_possible_values(Sudoku_board sudoku_board, int index) {
     int size = sudoku_board.size;
     int box_size = (int) pow(size, 2);
-    int *possible_values = calloc((size_t) box_size, sizeof(int));// = malloc((size_t) box_size);
+    int *possible_values = calloc((size_t) box_size, sizeof(int));
     int row_id = box_size * get_row_location(index, size);
     int col_id = get_col_location(index, size);
     int box_id = get_box_location(index, size);

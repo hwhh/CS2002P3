@@ -30,11 +30,9 @@ void print_sudoku_board(Sudoku_board sudoku_board) {
     int size = sudoku_board.size;
     for (int i = 0; i < sudoku_board.length; i += pow(size, 2)) {
         for (int j =0; j<size*size; j++){
-            int x = sudoku_board.board[i + j];
-            if (x < 10)
-                printf("  %d", x);
-            else
-                printf(" %d", x);
+            sudoku_board.board[i + j] < 10 ? printf("  %d", sudoku_board.board[i + j]) : printf(" %d",
+                                                                                                sudoku_board.board[i +
+                                                                                                                   j]);
         }
         printf("\n");
     }
