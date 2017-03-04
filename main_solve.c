@@ -1,7 +1,8 @@
 #include "sudoku_solver.c"
 
 void printstatus(Sudoku_board s) {
-    switch (sudoku_solve(s)) {
+    enum STATE x = sudoku_solve_opt(s);
+    switch (x) {
         case MULTIPLE:
             printf("MULTIPLE");
             break;
@@ -19,3 +20,4 @@ int main() {
     Sudoku_board s = create_board("");
     printstatus(s);
 }
+//DYLD_INSERT_LIBRARIES=/usr/lib/libgmalloc.dylib

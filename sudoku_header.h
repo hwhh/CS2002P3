@@ -4,13 +4,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-
-
-#ifndef PRACTICAL3_SUDOKU_HEADER_H
-#define PRACTICAL3_SUDOKU_HEADER_H
-
-#endif //PRACTICAL3_SUDOKU_HEADER_H
-
 typedef struct {
     int *board;
     bool *possible_values;
@@ -64,7 +57,5 @@ int get_col_location(int index, int size);
 int get_box_location(int index, int size);
 
 int *get_possible_values(Sudoku_board sudoku_board, int index);
-
-int get_nex_cell(Sudoku_board sudoku_board);
 
 enum STATE sudoku_solve(Sudoku_board sudoku_board);

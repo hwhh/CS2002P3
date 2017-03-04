@@ -18,14 +18,15 @@ void uncover(struct Node *col_node) {
     col_node->Left->Right = col_node;
 }
 
-enum STATE solve(int k) {
+void solve(int k) {
     if ((root_node->Left == root_node && root_node->Right == root_node) || k == ((int) pow(size, 4) - MaxK)) {
         //Valid solution!
         print_board();
         Finished = 1;
-        return COMPLETE;
+        return;
     }
     struct Node *Column = choose_column();
+
     cover(Column);
 
     struct Node *row_node;

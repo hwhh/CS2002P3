@@ -1,7 +1,8 @@
 #include "sudoku_io.c"
 
-int counter = 0;
+int counter = 0, location = 0;
 Sudoku_board solved_board;
+bool changes_made = true;
 
 bool contains(int *arr, int val, int size) {
     for (int i = 0; i < size; i++) {
@@ -54,8 +55,8 @@ int *get_possible_values(Sudoku_board sudoku_board, int index) {
     return possible_values;
 }
 
-int get_nex_cell(Sudoku_board sudoku_board) {
-    for (int i = 0; i < sudoku_board.length; i++) {
+int get_nex_cell(Sudoku_board sudoku_board, int index) {
+    for (int i = index; i < sudoku_board.length; i++) {
         if (sudoku_board.possible_values[i] == true)
             return i;
     }
@@ -80,7 +81,7 @@ enum STATE sudoku_solve(Sudoku_board sudoku_board) {
     } else if (state == -1)
         return UNSOLVABLE;
     else {
-        int index = get_nex_cell(sudoku_board);
+        int index = get_nex_cell(sudoku_board, 0);
         int *values = get_possible_values(sudoku_board, index);
         for (int i = 0; i < pow(sudoku_board.size, 2); i++) {
             if (values[i] == 0)
@@ -96,5 +97,63 @@ enum STATE sudoku_solve(Sudoku_board sudoku_board) {
         free(values);
     }
 }
+
+//check if second value is 0
+//if it is get next empty cell
+//otherwise fill cell
+//Keep going until hit end cell
+//Check if any changes are made ?
+//Solve rest recursively
+int free_cells(Sudoku_board sudoku_board) {
+    int count = 0;
+    for (int i = 0; i < sudoku_board.length; i++) {
+        if (sudoku_board.possible_values[i] == true)
+            count++;
+    }
+    return count;
+}
+
+
+Sudoku_board fill_single_cell(Sudoku_board sudoku_board) {
+    changes_made = false;
+    int no_of_cells = free_cells(sudoku_board);
+    int index = get_nex_cell(sudoku_board, 0);
+    for (int i = 0; i < no_of_cells; i++) {
+        index = get_nex_cell(sudoku_board, i);
+        int *values = get_possible_values(sudoku_board, index);
+        if (check_sudoku(sudoku_board) == 1)
+            return sudoku_board;
+        if (values[1] == 0) {
+            sudoku_board.board[index] = values[0];
+            sudoku_board.possible_values[index] = false;
+            changes_made = true;
+        }
+        free(values);
+    }
+    return sudoku_board;
+}
+
+enum STATE sudoku_solve_opt(Sudoku_board sudoku_board) {
+    int state = check_sudoku(sudoku_board);
+    if (state == 1) {
+        solved_board = sudoku_board;
+        counter++;
+        return COMPLETE;
+    } else if (state == -1)
+        return UNSOLVABLE;
+    else {
+        Sudoku_board s;
+        while (changes_made != false) {
+            s = fill_single_cell(sudoku_board);
+            if (check_sudoku(s) == 1) {
+                print_sudoku_board(s);
+                return COMPLETE;
+            }
+        }
+        sudoku_solve(s);
+    }
+}
+
+
 
 

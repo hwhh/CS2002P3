@@ -10,7 +10,6 @@ enum STATE {
 
 
 struct Node {
-
     struct Node *Header;
     struct Node *Left;
     struct Node *Right;
