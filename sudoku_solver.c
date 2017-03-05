@@ -1,6 +1,6 @@
 #include "sudoku_io.c"
 
-int counter = 0, location = 0;
+int counter = 0;
 Sudoku_board solved_board;
 bool changes_made = true;
 
@@ -116,41 +116,39 @@ int free_cells(Sudoku_board sudoku_board) {
 
 Sudoku_board fill_single_cell(Sudoku_board sudoku_board) {
     changes_made = false;
-    int no_of_cells = free_cells(sudoku_board);
-    int index = get_nex_cell(sudoku_board, 0);
+    Sudoku_board copy = copy_sudoku_board(sudoku_board);
+    int no_of_cells = free_cells(copy);
     for (int i = 0; i < no_of_cells; i++) {
-        index = get_nex_cell(sudoku_board, i);
-        int *values = get_possible_values(sudoku_board, index);
-        if (check_sudoku(sudoku_board) == 1)
+        int index = get_nex_cell(copy, i);
+        int *values = get_possible_values(copy, index);
+        if (check_sudoku(copy) == 1)
             return sudoku_board;
         if (values[1] == 0) {
-            sudoku_board.board[index] = values[0];
-            sudoku_board.possible_values[index] = false;
+            copy.board[index] = values[0];
+            copy.possible_values[index] = false;
             changes_made = true;
         }
         free(values);
     }
-    return sudoku_board;
+    return copy;
 }
 
 enum STATE sudoku_solve_opt(Sudoku_board sudoku_board) {
     int state = check_sudoku(sudoku_board);
     if (state == 1) {
-        solved_board = sudoku_board;
-        counter++;
+        print_sudoku_board(sudoku_board);
         return COMPLETE;
     } else if (state == -1)
         return UNSOLVABLE;
     else {
-        Sudoku_board s;
         while (changes_made != false) {
-            s = fill_single_cell(sudoku_board);
+            Sudoku_board s = fill_single_cell(sudoku_board);
             if (check_sudoku(s) == 1) {
                 print_sudoku_board(s);
                 return COMPLETE;
             }
         }
-        sudoku_solve(s);
+        return INCOMPLETE;
     }
 }
 
