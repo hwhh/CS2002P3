@@ -2,18 +2,25 @@
 #include <time.h>
 #include "dancing_links_solver.c"
 
+
 int main() {
-    clock_t start = clock(), diff;
-    create_board("");
-
-    solve(0);
-    if (Finished != 1)
+    create_board_dxl("");
+    clock_t begin = clock();
+    enum STATE x = solve(0);
+    if (x == UNSOLVABLE)
         printf("UNSOLVABLE");
+    clock_t end = clock();
+    FILE *fp;
+    fp = fopen(
+            "/Users/henryhargreaves/Documents/University/Year_2/CS2002/Practicals/Practical3-C2/dancing-links-speed.txt",
+            "a+");
+    if (fp != NULL) {
+        double time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+        if (Finished >= 1)
+            fprintf(fp, "%lf\n", time_spent);
+    }
+    fclose(fp);
 
-
-    diff = clock() - start;
-    int msec = (int) (diff * 1000 / CLOCKS_PER_SEC);
-    //printf("\nTime taken %d seconds %d milliseconds", msec/1000, msec%1000);
 
 }
 

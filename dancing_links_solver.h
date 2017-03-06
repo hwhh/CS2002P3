@@ -1,12 +1,8 @@
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-enum STATE {
-    UNSOLVABLE = -1,//": The array contains some value twice.",
-    COMPLETE = 1,//": The array is not INVALID, and every value is assigned. \n"This means the array contains the values between 1 and 9, in some permutation."
-};
 
 
 struct Node {
@@ -29,8 +25,9 @@ char **data;
 int *result;
 int nResult = 0, MaxK, nCol, nRow, size;
 char Finished;
+bool valid = false;
 
-// --> Initialisation functions
+//Initialisation functions
 int data_left(int i) {
     return i - 1 < 0 ? nCol - 1 : i - 1;
 }
@@ -52,32 +49,32 @@ int get_number(int index) {
     return (int) (index / pow(size, 4));
 }
 
-int get_row(int index) {
+int get_row_index(int index) {
     return (int) (index / pow(size, 2)) % (int) pow(size, 2);
 }
 
-int get_col(int index) {
+int get_col_index(int index) {
     return index % (int) pow(size, 2);
 }
 
-int get_box(int index) {
-    return ((get_row(index) / size) * size) + (get_col(index) / size);
+int get_box_index(int index) {
+    return ((get_row_index(index) / size) * size) + (get_col_index(index) / size);
 }
 
 int get_cell(int index) {
-    return (int) (get_row(index) * pow(size, 2) + get_col(index));
+    return (int) (get_row_index(index) * pow(size, 2) + get_col_index(index));
 }
 
 int get_row_num(int index) {
-    return (int) (get_number(index) * pow(size, 2) + get_row(index));
+    return (int) (get_number(index) * pow(size, 2) + get_row_index(index));
 }
 
 int get_col_num(int index) {
-    return (int) (get_number(index) * pow(size, 2) + get_col(index));
+    return (int) (get_number(index) * pow(size, 2) + get_col_index(index));
 }
 
 int get_box_num(int index) {
-    return (int) (get_number(index) * pow(size, 2) + get_box(index));
+    return (int) (get_number(index) * pow(size, 2) + get_box_index(index));
 }
 
 
